@@ -17,17 +17,19 @@ public class GameObject {
 	protected int aniTick, aniIndex;
 	protected int xDrawOffset, yDrawOffset;
 
+	//รับตำแหน่ง (x, y) และประเภทของวัตถุ (objType) แล้วทำการกำหนดค่าให้กับตัวแปรอินสแตนซ์
 	public GameObject(int x, int y, int objType) {
 		this.x = x;
 		this.y = y;
 		this.objType = objType;
 	}
 
+	//อัปเดตการเคลื่อนไหวของวัตถุ
 	protected void updateAnimationTick() {
-		aniTick++;
+		aniTick++;//เพิ่มค่า aniTick ทุกครั้งที่อัปเดต
 		if (aniTick >= ANI_SPEED) {
 			aniTick = 0;
-			aniIndex++;
+			aniIndex++;//หาก aniTick ถึง ANI_SPEED จะรีเซ็ต aniTick และเพิ่ม aniIndex
 			if (aniIndex >= GetSpriteAmount(objType)) {
 				aniIndex = 0;
 				if (objType == BARREL || objType == BOX) {
@@ -39,21 +41,25 @@ public class GameObject {
 		}
 	}
 
+	//สำหรับรีเซ็ตวัตถุ
 	public void reset() {
 		aniIndex = 0;
 		aniTick = 0;
 		active = true;
+		//รีเซ็ต aniIndex และ aniTick เป็น 0
 
 		if (objType == BARREL || objType == BOX || objType == CANNON_LEFT || objType == CANNON_RIGHT)
-			doAnimation = false;
+			doAnimation = false;//หยุดการเคลื่อนไหวหากวัตถุเป็นถัง, กล่อง, หรือปืนใหญ่
 		else
 			doAnimation = true;
 	}
 
+	//กำหนด Hitbox ของวัตถุ โดยคำนวณขนาด Hitbox
 	protected void initHitbox(int width, int height) {
 		hitbox = new Rectangle2D.Float(x, y, (int) (width * Game.SCALE), (int) (height * Game.SCALE));
 	}
 
+	//วาด Hitbox ของวัตถุบนหน้าจอ
 	public void drawHitbox(Graphics g, int xLvlOffset) {
 		g.setColor(Color.PINK);
 		g.drawRect((int) hitbox.x - xLvlOffset, (int) hitbox.y, (int) hitbox.width, (int) hitbox.height);

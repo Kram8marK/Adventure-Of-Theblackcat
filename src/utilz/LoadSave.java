@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 
 public class LoadSave {
 
+    //ชื่อไฟล์ของทรัพยากรต่าง ๆ
     public static final String PLAYER_CAT = "player_sprites.png";
     public static final String PLAYER_ORC = "player_orc.png";
     public static final String PLAYER_SOLDIER = "player_soldier.png";
@@ -52,20 +53,21 @@ public class LoadSave {
     public static final String SHIP = "ship.png";
 
 
+    //โหลดภาพสไปรต์ของตัวละครและแบ่งออกเป็นส่วน ๆ เพื่อใช้ในการเคลื่อนไหว
     public static BufferedImage[][] loadAnimations(PlayerCharacter pc) {
-        BufferedImage img = LoadSave.GetSpriteAtlas(pc.playerAtlas);
-        BufferedImage[][] animations = new BufferedImage[pc.rowA][pc.colA];
-        for (int j = 0; j < animations.length; j++)
+        BufferedImage img = LoadSave.GetSpriteAtlas(pc.playerAtlas);//โหลดภาพสไปรต์จากไฟล์ที่กำหนด
+        BufferedImage[][] animations = new BufferedImage[pc.rowA][pc.colA];//แบ่งภาพออกเป็นส่วนย่อยตามจำนวนแถวและคอลัมน์ที่กำหนด
+        for (int j = 0; j < animations.length; j++)//ส่งคืนอาร์เรย์ของภาพสไปรต์ที่แบ่งแล้ว
             for (int i = 0; i < animations[j].length; i++)
                 animations[j][i] = img.getSubimage(i * pc.spriteW, j * pc.spriteH, pc.spriteW, pc.spriteH);
 
         return animations;
     }
 
-
+    //โหลดภาพสไปรต์จากไฟล์ที่กำหนด
     public static BufferedImage GetSpriteAtlas(String fileName) {
         BufferedImage img = null;
-        InputStream is = LoadSave.class.getResourceAsStream("/" + fileName);
+        InputStream is = LoadSave.class.getResourceAsStream("/" + fileName);//อ่านไฟล์ภาพ
         try {
             img = ImageIO.read(is);
 
@@ -78,9 +80,10 @@ public class LoadSave {
                 e.printStackTrace();
             }
         }
-        return img;
+        return img;//ส่งคืนภาพที่โหลดมา
     }
 
+    //โหลดภาพรเลเวลต่าง ๆ 
     public static BufferedImage[] GetAllLevels() {
         URL url = LoadSave.class.getResource("/lvls");
         File file = null;

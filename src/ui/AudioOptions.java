@@ -22,12 +22,14 @@ public class AudioOptions {
 		createVolumeButton();
 	}
 
+	//สร้างปุ่มควบคุมระดับเสียง โดยกำหนดตำแหน่งและขนาดของปุ่ม
 	private void createVolumeButton() {
 		int vX = (int) (309 * Game.SCALE);
 		int vY = (int) (278 * Game.SCALE);
 		volumeButton = new VolumeButton(vX, vY, SLIDER_WIDTH, VOLUME_HEIGHT);
 	}
 
+	//สร้างปุ่มควบคุมเสียงเพลงและเสียงเอฟเฟกต์ โดยกำหนดตำแหน่งและขนาดของปุ่ม
 	private void createSoundButtons() {
 		int soundX = (int) (450 * Game.SCALE);
 		int musicY = (int) (140 * Game.SCALE);
@@ -36,13 +38,15 @@ public class AudioOptions {
 		sfxButton = new SoundButton(soundX, sfxY, SOUND_SIZE, SOUND_SIZE);
 	}
 
+	//อัปเดตสถานะของปุ่มควบคุมเสียงเพลง, เสียงเอฟเฟกต์, และระดับเสียง
 	public void update() {
 		musicButton.update();
 		sfxButton.update();
 
 		volumeButton.update();
 	}
-
+	
+	//วาดปุ่มควบคุมเสียงเพลง, เสียงเอฟเฟกต์, และระดับเสียงบนหน้าจอ
 	public void draw(Graphics g) {
 		// Sound buttons
 		musicButton.draw(g);
@@ -52,6 +56,7 @@ public class AudioOptions {
 		volumeButton.draw(g);
 	}
 
+	//หากปุ่มควบคุมระดับเสียงถูกกดอยู่ จะปรับตำแหน่งของแถบเลื่อนและอัปเดตระดับเสียงในเกม
 	public void mouseDragged(MouseEvent e) {
 		if (volumeButton.isMousePressed()) {
 			float valueBefore = volumeButton.getFloatValue();
@@ -71,6 +76,7 @@ public class AudioOptions {
 			volumeButton.setMousePressed(true);
 	}
 
+	////หากปุ่มควบคุมเสียงเพลงหรือเสียงเอฟเฟกต์ถูกกด จะสลับสถานะการปิดเสียงและอัปเดตการตั้งค่าเสียงในเกม
 	public void mouseReleased(MouseEvent e) {
 		if (isIn(e, musicButton)) {
 			if (musicButton.isMousePressed()) {

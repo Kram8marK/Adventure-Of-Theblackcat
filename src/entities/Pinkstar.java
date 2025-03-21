@@ -1,6 +1,7 @@
 package entities;
 
 import static utilz.Constants.EnemyConstants.*;
+import static utilz.Constants.EnemyConstants.GetSpriteAmount;
 import static utilz.Constants.Dialogue.*;
 import static utilz.HelpMethods.CanMoveHere;
 import static utilz.HelpMethods.IsFloor;
@@ -10,16 +11,18 @@ import gamestates.Playing;
 
 public class Pinkstar extends Enemy {
 
-	private boolean preRoll = true;
+	private boolean preRoll = true;//ตรวจสอบว่า น้องดาว กำลังเตรียมตัวกลิ้งหรือไม่
 	private int tickSinceLastDmgToPlayer;
 	private int tickAfterRollInIdle;
-	private int rollDurationTick, rollDuration = 300;
+	private int rollDurationTick, rollDuration = 300;//ระยะเวลาการกลิ้ง (300 ticks)
 
+	//กำหนดค่าเริ่มต้นให้กับตัวแปร x, y, width, height, และ enemyType เมื่อสร้างอ็อบเจกต์ Pinkstar
 	public Pinkstar(float x, float y) {
 		super(x, y, PINKSTAR_WIDTH, PINKSTAR_HEIGHT, PINKSTAR);
 		initHitbox(17, 21);
 	}
 
+	//อัปเดตพฤติกรรมและการเคลื่อนไหวของ Pinkstar
 	public void update(int[][] lvlData, Playing playing) {
 		updateBehavior(lvlData, playing);
 		updateAnimationTick();
@@ -33,7 +36,7 @@ public class Pinkstar extends Enemy {
 			inAirChecks(lvlData, playing);
 		else {
 			switch (state) {
-			case IDLE:
+			case IDLE://หาก Pinkstar อยู่ในสถานะ IDLE เป็นเวลา 120 ticks จะเปลี่ยนสถานะเป็น RUNNING
 				preRoll = true;
 				if (tickAfterRollInIdle >= 120) {
 					if (IsFloor(hitbox, lvlData))
@@ -45,14 +48,14 @@ public class Pinkstar extends Enemy {
 				} else
 					tickAfterRollInIdle++;
 				break;
-			case RUNNING:
+			case RUNNING://หาก Pinkstar มองเห็นผู้เล่น จะเปลี่ยนสถานะเป็น ATTACK และกำหนดทิศทางการเดิน
 				if (canSeePlayer(lvlData, playing.getPlayer())) {
 					newState(ATTACK);
 					setWalkDir(playing.getPlayer());
 				}
 				move(lvlData, playing);
 				break;
-			case ATTACK:
+			case ATTACK://หาก Pinkstar อยู่ในสถานะ ATTACK จะเคลื่อนที่และโจมตีผู้เล่น
 				if (preRoll) {
 					if (aniIndex >= 3)
 						preRoll = false;
@@ -62,7 +65,7 @@ public class Pinkstar extends Enemy {
 					checkRollOver(playing);
 				}
 				break;
-			case HIT:
+			case HIT://หาก Pinkstar ถูกโจมตี จะถูกพลักกลับและอัปเดตการเคลื่อนไหว
 				if (aniIndex <= GetSpriteAmount(enemyType, state) - 2)
 					pushBack(pushBackDir, lvlData, 2f);
 				updatePushBackDrawOffset();
@@ -73,6 +76,7 @@ public class Pinkstar extends Enemy {
 		}
 	}
 
+	//ตรวจสอบการชนกับผู้เล่นและลดเลือดของผู้เล่นหากถูกโจมตี
 	private void checkDmgToPlayer(Player player) {
 		if (hitbox.intersects(player.getHitbox()))
 			if (tickSinceLastDmgToPlayer >= 60) {
@@ -82,6 +86,7 @@ public class Pinkstar extends Enemy {
 				tickSinceLastDmgToPlayer++;
 	}
 
+	//กำหนดทิศทางการเดินของ น้องปู ตามตำแหน่งของผู้เล่น
 	private void setWalkDir(Player player) {
 		if (player.getHitbox().x > hitbox.x)
 			walkDir = RIGHT;
@@ -90,6 +95,7 @@ public class Pinkstar extends Enemy {
 
 	}
 
+	//เคลื่อนที่ Pinkstar ตามทิศทางที่กำหนด
 	protected void move(int[][] lvlData, Playing playing) {
 		float xSpeed = 0;
 
@@ -98,7 +104,7 @@ public class Pinkstar extends Enemy {
 		else
 			xSpeed = walkSpeed;
 
-		if (state == ATTACK)
+		if (state == ATTACK)//เมื่อโจมตีเคลื่อนที่เร็ว2เท่า
 			xSpeed *= 2;
 
 		if (CanMoveHere(hitbox.x + xSpeed, hitbox.y, hitbox.width, hitbox.height, lvlData))
@@ -116,6 +122,7 @@ public class Pinkstar extends Enemy {
 
 	}
 
+	//ตรวจสอบระยะเวลาการกลิ้งและเปลี่ยนสถานะเป็น IDLE หากครบกำหนด
 	private void checkRollOver(Playing playing) {
 		rollDurationTick++;
 		if (rollDurationTick >= rollDuration) {
@@ -124,6 +131,7 @@ public class Pinkstar extends Enemy {
 		}
 	}
 
+	//เปลี่ยนสถานะของ Pinkstar เป็น IDLE และแสดง(Question Dialouge)
 	private void rollOver(Playing playing) {
 		newState(IDLE);
 		playing.addDialogue((int) hitbox.x, (int) hitbox.y, QUESTION);

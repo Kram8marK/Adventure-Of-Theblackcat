@@ -23,6 +23,7 @@ public class PlayerSelection extends State implements Statemethods {
     private CharacterAnimation[] characterAnimations;
 
 
+    //กำหนดค่าเริ่มต้นให้กับตัวแปรต่าง ๆ
     public PlayerSelection(Game game) {
         super(game);
 
@@ -33,15 +34,17 @@ public class PlayerSelection extends State implements Statemethods {
         loadCharAnimations();
     }
 
+    //โหลดตัวละครที่สามารถเลือกได้และเก็บไว้ในอาร์เรย์
     private void loadCharAnimations() {
         characterAnimations = new CharacterAnimation[3];
         int i = 0;
-        characterAnimations[i++] = new CharacterAnimation(PlayerCharacter.PIRATE);
-        characterAnimations[i++] = new CharacterAnimation(PlayerCharacter.ORC);
-        characterAnimations[i++] = new CharacterAnimation(PlayerCharacter.SOLDIER);
+        characterAnimations[i++] = new CharacterAnimation(PlayerCharacter.CAT);
+        characterAnimations[i++] = new CharacterAnimation(PlayerCharacter.DOG);
+        characterAnimations[i++] = new CharacterAnimation(PlayerCharacter.CAT2);
 
     }
 
+    //โหลดภาพพื้นหลังของเมนูและกำหนดขนาดและตำแหน่งของเมนู
     private void loadBackground() {
         backgroundImg = LoadSave.GetSpriteAtlas(LoadSave.MENU_BACKGROUND);
         menuWidth = (int) (backgroundImg.getWidth() * Game.SCALE);
@@ -50,12 +53,14 @@ public class PlayerSelection extends State implements Statemethods {
         menuY = (int) (25 * Game.SCALE);
     }
 
+    //โหลดปุ่มเล่นเกมและกำหนดตำแหน่ง, รูปแบบ, และสถานะที่เกี่ยวข้อง
     private void loadButtons() {
 
         playButton = new MenuButton(Game.GAME_WIDTH / 2, (int) (340 * Game.SCALE), 0, Gamestate.PLAYING);
 
     }
 
+    //อัปเดตสถานะของปุ่มเล่นเกมและตัวละครที่สามารถเลือกได้
     @Override
     public void update() {
         playButton.update();
@@ -63,6 +68,7 @@ public class PlayerSelection extends State implements Statemethods {
             ca.update();
     }
 
+    //วาดภาพพื้นหลัง, ปุ่มเล่นเกม, และตัวละครที่สามารถเลือกได้บนหน้าจอ
     @Override
     public void draw(Graphics g) {
         g.drawImage(backgroundImgPink, 0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT, null);
@@ -82,6 +88,7 @@ public class PlayerSelection extends State implements Statemethods {
 
     }
 
+    //วาดตัวละครที่ตำแหน่งที่กำหนด
     private void drawChar(Graphics g, int playerIndex, int x, int y) {
         if (playerIndex < 0)
             playerIndex = characterAnimations.length - 1;
@@ -90,6 +97,7 @@ public class PlayerSelection extends State implements Statemethods {
         characterAnimations[playerIndex].draw(g, x, y);
     }
 
+    //จัดการการกดเมาส์บนปุ่มเล่นเกม
     @Override
     public void mousePressed(MouseEvent e) {
 
@@ -99,6 +107,7 @@ public class PlayerSelection extends State implements Statemethods {
 
     }
 
+    //จัดการการปล่อยเมาส์บนปุ่มเล่นเกมและเปลี่ยนสถานะของเกมตามปุ่มที่คลิก
     @Override
     public void mouseReleased(MouseEvent e) {
 
@@ -116,9 +125,11 @@ public class PlayerSelection extends State implements Statemethods {
         resetButtons();
     }
 
+    //รีเซ็ตสถานะของปุ่มเล่นเกม
     private void resetButtons() {
         playButton.resetBools();
     }
+
 
     @Override
     public void mouseMoved(MouseEvent e) {
@@ -160,6 +171,7 @@ public class PlayerSelection extends State implements Statemethods {
 
     }
 
+    //คลาสนี้ใช้จัดการการแสดงผลและการเคลื่อนไหวของตัวละครที่สามารถเลือกได้
     public class CharacterAnimation {
         private final PlayerCharacter pc;
         private int aniTick, aniIndex;

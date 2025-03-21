@@ -18,19 +18,17 @@ import utilz.LoadSave;
 
 public class Player extends Entity {
 
-    private BufferedImage[][] animations;
-    private boolean moving = false, attacking = false;
-    private boolean left, right, jump;
-    private int[][] lvlData;
-//    private float xDrawOffset = 21 * Game.SCALE;
-//    private float yDrawOffset = 4 * Game.SCALE;
+    private BufferedImage[][] animations;//เก็บภาพเคลื่อนไหวของผู้เล่น
+    private boolean moving = false, attacking = false;//ตรวจสอบว่าผู้เล่นกำลังเคลื่อนที่หรือไม่/ตรวจสอบว่าผู้เล่นกำลังโจมตีหรือไม่
+    private boolean left, right, jump;//ตรวจสอบการกดปุ่มควบคุมทิศทางและกระโดด
+    private int[][] lvlData;//ข้อมูลของเลเวลที่ผู้เล่นอยู่
 
     // Jumping / Gravity
-    private float jumpSpeed = -2.25f * Game.SCALE;
-    private float fallSpeedAfterCollision = 0.5f * Game.SCALE;
+    private float jumpSpeed = -2.25f * Game.SCALE;//ความเร็วในการกระโดด
+    private float fallSpeedAfterCollision = 0.5f * Game.SCALE;//ความเร็วในการตก
 
     // StatusBarUI
-    private BufferedImage statusBarImg;
+    private BufferedImage statusBarImg;//ภาพของ Status Bar
 
     private int statusBarWidth = (int) (192 * Game.SCALE);
     private int statusBarHeight = (int) (58 * Game.SCALE);
@@ -41,31 +39,34 @@ public class Player extends Entity {
     private int healthBarHeight = (int) (4 * Game.SCALE);
     private int healthBarXStart = (int) (34 * Game.SCALE);
     private int healthBarYStart = (int) (14 * Game.SCALE);
-    private int healthWidth = healthBarWidth;
+    private int healthWidth = healthBarWidth;//ความกว้างของ Health Bar
 
     private int powerBarWidth = (int) (104 * Game.SCALE);
     private int powerBarHeight = (int) (2 * Game.SCALE);
     private int powerBarXStart = (int) (44 * Game.SCALE);
     private int powerBarYStart = (int) (34 * Game.SCALE);
-    private int powerWidth = powerBarWidth;
+    private int powerWidth = powerBarWidth;//ความกว้างของ Power Bar
     private int powerMaxValue = 200;
-    private int powerValue = powerMaxValue;
+    private int powerValue = powerMaxValue;//ค่าพลังงานปัจจุบันของผู้เล่น
 
+    //ใช้สำหรับพลิกภาพผู้เล่นเมื่อเปลี่ยนทิศทาง
     private int flipX = 0;
     private int flipW = 1;
 
+    //ตรวจสอบว่าการโจมตีถูกตรวจสอบแล้วหรือไม่
     private boolean attackChecked;
     private Playing playing;
 
     private int tileY = 0;
 
-    private boolean powerAttackActive;
-    private int powerAttackTick;
-    private int powerGrowSpeed = 15;
+    private boolean powerAttackActive;//ตรวจสอบว่าการโจมตีพลังพิเศษกำลังทำงานอยู่หรือไม่
+    private int powerAttackTick;//ตัวนับเวลาในการโจมตีพลังพิเศษ
+    private int powerGrowSpeed = 15;//ความเร็วในการฟื้นฟูพลังงาน
     private int powerGrowTick;
 
-    private final PlayerCharacter playerCharacter;
+    private final PlayerCharacter playerCharacter;//ข้อมูลลักษณะของผู้เล่น
 
+    //กำหนดค่าเริ่มต้นให้กับตัวแปรต่าง ๆ เช่น ตำแหน่ง, ขนาด, เลือด, ความเร็ว, และโหลดภาพเคลื่อนไหวของผู้เล่น
     public Player(PlayerCharacter playerCharacter, Playing playing) {
         super(0, 0, (int) (playerCharacter.spriteW * Game.SCALE), (int) (playerCharacter.spriteH * Game.SCALE));
         this.playerCharacter = playerCharacter;
@@ -80,6 +81,7 @@ public class Player extends Entity {
         initAttackBox();
     }
 
+    //จุดเกิด
     public void setSpawn(Point spawn) {
         this.x = spawn.x;
         this.y = spawn.y;
@@ -92,6 +94,7 @@ public class Player extends Entity {
         resetAttackBox();
     }
 
+    //อัปเดตสถานะต่าง ๆ ของผู้เล่น เช่น เลือด, พลังงาน, การเคลื่อนที่, การโจมตี, และการตรวจสอบการชน
     public void update() {
         updateHealthBar();
         updatePowerBar();
@@ -172,6 +175,7 @@ public class Player extends Entity {
         playing.checkPotionTouched(hitbox);
     }
 
+    //ตรวจสอบการโจมตีและเล่นเสียงโจมตี
     private void checkAttack() {
         if (attackChecked || aniIndex != 1)
             return;
@@ -209,10 +213,12 @@ public class Player extends Entity {
         attackBox.y = hitbox.y + (Game.SCALE * 10);
     }
 
+    //อัปเดต Health Bar ตามค่าเลือดปัจจุบัน
     private void updateHealthBar() {
         healthWidth = (int) ((currentHealth / (float) maxHealth) * healthBarWidth);
     }
 
+    //อัปเดต Power Bar ตามค่าพลังงานปัจจุบัน
     private void updatePowerBar() {
         powerWidth = (int) ((powerValue / (float) powerMaxValue) * powerBarWidth);
         powerGrowTick++;
@@ -222,10 +228,9 @@ public class Player extends Entity {
         }
     }
 
+    //วาดผู้เล่นและ UI (Health Bar, Power Bar) บนหน้าจอ
     public void render(Graphics g, int lvlOffset) {
         g.drawImage(animations[playerCharacter.getRowIndex(state)][aniIndex], (int) (hitbox.x - playerCharacter.xDrawOffset) - lvlOffset + flipX, (int) (hitbox.y - playerCharacter.yDrawOffset + (int) (pushDrawOffset)), width * flipW, height, null);
-        drawHitbox(g, lvlOffset);
-//		drawAttackBox(g, lvlOffset);
         drawUI(g);
     }
 
@@ -303,6 +308,7 @@ public class Player extends Entity {
         aniIndex = 0;
     }
 
+    //อัปเดตตำแหน่งของผู้เล่นตามการกดปุ่มควบคุม
     private void updatePos() {
         moving = false;
 

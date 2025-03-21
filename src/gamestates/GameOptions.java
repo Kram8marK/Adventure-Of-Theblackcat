@@ -14,11 +14,12 @@ import static utilz.Constants.UI.URMButtons.*;
 
 public class GameOptions extends State implements Statemethods {
 
-	private AudioOptions audioOptions;
-	private BufferedImage backgroundImg, optionsBackgroundImg;
-	private int bgX, bgY, bgW, bgH;
-	private UrmButton menuB;
+	private AudioOptions audioOptions;//ออบเจกต์ที่ใช้จัดการตัวเลือกเสียงในเกม
+	private BufferedImage backgroundImg, optionsBackgroundImg;//ภาพพื้นหลังของหน้าจอตัวเลือก/ภาพพื้นหลังของเมนูตัวเลือก
+	private int bgX, bgY, bgW, bgH;//ตำแหน่ง X และ Y ของภาพเมนูตัวเลือก/ความกว้างและความสูงของภาพเมนูตัวเลือก
+	private UrmButton menuB;//ปุ่มที่ใช้กลับไปยังเมนูหลัก
 
+	//กำหนดค่าเริ่มต้นให้กับตัวแปรต่าง ๆ
 	public GameOptions(Game game) {
 		super(game);
 		loadImgs();
@@ -26,6 +27,7 @@ public class GameOptions extends State implements Statemethods {
 		audioOptions = game.getAudioOptions();
 	}
 
+	//โหลดปุ่มเมนูและกำหนดตำแหน่งของปุ่ม
 	private void loadButton() {
 		int menuX = (int) (387 * Game.SCALE);
 		int menuY = (int) (325 * Game.SCALE);
@@ -33,6 +35,7 @@ public class GameOptions extends State implements Statemethods {
 		menuB = new UrmButton(menuX, menuY, URM_SIZE, URM_SIZE, 2);
 	}
 
+	//โหลดภาพพื้นหลังและภาพเมนูตัวเลือก และกำหนดขนาดและตำแหน่งของภาพเมนูตัวเลือก
 	private void loadImgs() {
 		backgroundImg = LoadSave.GetSpriteAtlas(LoadSave.MENU_BACKGROUND_IMG);
 		optionsBackgroundImg = LoadSave.GetSpriteAtlas(LoadSave.OPTIONS_MENU);
@@ -43,12 +46,14 @@ public class GameOptions extends State implements Statemethods {
 		bgY = (int) (33 * Game.SCALE);
 	}
 
+	//อัปเดตสถานะของปุ่มเมนูและตัวเลือกเสียง
 	@Override
 	public void update() {
 		menuB.update();
 		audioOptions.update();
 	}
 
+	//วาดภาพพื้นหลัง, ภาพเมนูตัวเลือก, ปุ่มเมนู, และตัวเลือกเสียงบนหน้าจอ
 	@Override
 	public void draw(Graphics g) {
 		g.drawImage(backgroundImg, 0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT, null);
@@ -58,10 +63,12 @@ public class GameOptions extends State implements Statemethods {
 		audioOptions.draw(g);
 	}
 
+	//จัดการการลากเมาส์บนตัวเลือกเสียง
 	public void mouseDragged(MouseEvent e) {
 		audioOptions.mouseDragged(e);
 	}
 
+	//จัดการการกดเมาส์บนปุ่มเมนูหรือตัวเลือกเสียง
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if (isIn(e, menuB)) {
@@ -70,6 +77,7 @@ public class GameOptions extends State implements Statemethods {
 			audioOptions.mousePressed(e);
 	}
 
+	//จัดการการปล่อยเมาส์บนปุ่มเมนูหรือตัวเลือกเสียง และเปลี่ยนสถานะเป็นเมนูหลักหากผู้เล่นคลิกที่ปุ่มเมนู
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		if (isIn(e, menuB)) {
@@ -80,6 +88,7 @@ public class GameOptions extends State implements Statemethods {
 		menuB.resetBools();
 	}
 
+	//จัดการการเคลื่อนเมาส์บนปุ่มเมนูหรือตัวเลือกเสียง
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		menuB.setMouseOver(false);
@@ -90,6 +99,7 @@ public class GameOptions extends State implements Statemethods {
 			audioOptions.mouseMoved(e);
 	}
 
+	//หากผู้เล่นกดปุ่ม ESC จะเปลี่ยนสถานะเป็นเมนูหลัก
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
@@ -108,6 +118,7 @@ public class GameOptions extends State implements Statemethods {
 
 	}
 
+	//ตรวจสอบว่าเมาส์อยู่ภายในขอบเขตของปุ่มหรือไม่
 	private boolean isIn(MouseEvent e, PauseButton b) {
 		return b.getBounds().contains(e.getX(), e.getY());
 	}

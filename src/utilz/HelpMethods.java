@@ -7,6 +7,7 @@ import objects.Projectile;
 
 public class HelpMethods {
 
+	//ตรวจสอบว่าวัตถุสามารถเคลื่อนที่ไปยังตำแหน่งที่กำหนดได้หรือไม่ โดยตรวจสอบว่าจุดต่าง ๆ รอบวัตถุนั้นไม่เป็นพื้นที่ทึบ
 	public static boolean CanMoveHere(float x, float y, float width, float height, int[][] lvlData) {
 		if (!IsSolid(x, y, lvlData))
 			if (!IsSolid(x + width, y + height, lvlData))
@@ -16,6 +17,7 @@ public class HelpMethods {
 		return false;
 	}
 
+	//ตรวจสอบว่าตำแหน่งที่กำหนดเป็นพื้นที่ทึบหรือไม่ โดยคำนวณดัชนีของไทล์และตรวจสอบว่าไทล์นั้นเป็นพื้นที่ทึบหรือไม่
 	private static boolean IsSolid(float x, float y, int[][] lvlData) {
 		int maxWidth = lvlData[0].length * Game.TILES_SIZE;
 		if (x < 0 || x >= maxWidth)
@@ -28,25 +30,27 @@ public class HelpMethods {
 		return IsTileSolid((int) xIndex, (int) yIndex, lvlData);
 	}
 
+	//ตรวจสอบว่ากระสุนชนกับพื้นที่ทึบในระดับหรือไม่
 	public static boolean IsProjectileHittingLevel(Projectile p, int[][] lvlData) {
 		return IsSolid(p.getHitbox().x + p.getHitbox().width / 2, p.getHitbox().y + p.getHitbox().height / 2, lvlData);
 	}
 
+	//ตรวจสอบว่าวัตถุอยู่ในน้ำหรือไม่ โดยตรวจสอบค่าไทล์ที่อยู่ใต้วัตถุ
 	public static boolean IsEntityInWater(Rectangle2D.Float hitbox, int[][] lvlData) {
-		// Will only check if entity touch top water. Can't reach bottom water if not
-		// touched top water.
 		if (GetTileValue(hitbox.x, hitbox.y + hitbox.height, lvlData) != 48)
 			if (GetTileValue(hitbox.x + hitbox.width, hitbox.y + hitbox.height, lvlData) != 48)
 				return false;
 		return true;
 	}
 
+	//ดึงค่าของไทล์ที่ตำแหน่งที่กำหนด
 	private static int GetTileValue(float xPos, float yPos, int[][] lvlData) {
 		int xCord = (int) (xPos / Game.TILES_SIZE);
 		int yCord = (int) (yPos / Game.TILES_SIZE);
 		return lvlData[yCord][xCord];
 	}
 
+	//ตรวจสอบว่าไทล์ที่กำหนดเป็นพื้นที่ทึบหรือไม่ โดยตรวจสอบค่าของไทล์
 	public static boolean IsTileSolid(int xTile, int yTile, int[][] lvlData) {
 		int value = lvlData[yTile][xTile];
 
@@ -59,6 +63,7 @@ public class HelpMethods {
 
 	}
 
+	//คำนวณตำแหน่งแกน X ของวัตถุเมื่อชนกับกำแพง
 	public static float GetEntityXPosNextToWall(Rectangle2D.Float hitbox, float xSpeed) {
 		int currentTile = (int) (hitbox.x / Game.TILES_SIZE);
 		if (xSpeed > 0) {
@@ -71,6 +76,7 @@ public class HelpMethods {
 			return currentTile * Game.TILES_SIZE;
 	}
 
+	//คำนวณตำแหน่งแกน Y ของวัตถุเมื่อชนกับพื้นหรือเพดาน
 	public static float GetEntityYPosUnderRoofOrAboveFloor(Rectangle2D.Float hitbox, float airSpeed) {
 		int currentTile = (int) (hitbox.y / Game.TILES_SIZE);
 		if (airSpeed > 0) {
@@ -84,6 +90,7 @@ public class HelpMethods {
 
 	}
 
+	//ตรวจสอบว่าวัตถุอยู่บนพื้นหรือไม่
 	public static boolean IsEntityOnFloor(Rectangle2D.Float hitbox, int[][] lvlData) {
 		if (!IsSolid(hitbox.x, hitbox.y + hitbox.height + 1, lvlData))
 			if (!IsSolid(hitbox.x + hitbox.width, hitbox.y + hitbox.height + 1, lvlData))
@@ -91,6 +98,7 @@ public class HelpMethods {
 		return true;
 	}
 
+	//พื้นที่ด้านหน้าวัตถุเป็นพื้นหรือไม่
 	public static boolean IsFloor(Rectangle2D.Float hitbox, float xSpeed, int[][] lvlData) {
 		if (xSpeed > 0)
 			return IsSolid(hitbox.x + hitbox.width + xSpeed, hitbox.y + hitbox.height + 1, lvlData);
@@ -105,6 +113,7 @@ public class HelpMethods {
 		return true;
 	}
 
+	//ตรวจสอบว่าปืนใหญ่สามารถมองเห็นผู้เล่นได้หรือไม่
 	public static boolean CanCannonSeePlayer(int[][] lvlData, Rectangle2D.Float firstHitbox, Rectangle2D.Float secondHitbox, int yTile) {
 		int firstXTile = (int) (firstHitbox.x / Game.TILES_SIZE);
 		int secondXTile = (int) (secondHitbox.x / Game.TILES_SIZE);
@@ -115,6 +124,7 @@ public class HelpMethods {
 			return IsAllTilesClear(firstXTile, secondXTile, yTile, lvlData);
 	}
 
+	//ตรวจสอบว่าไทล์ทั้งหมดในช่วงที่กำหนดไม่เป็นพื้นที่ทึบ
 	public static boolean IsAllTilesClear(int xStart, int xEnd, int y, int[][] lvlData) {
 		for (int i = 0; i < xEnd - xStart; i++)
 			if (IsTileSolid(xStart + i, y, lvlData))
@@ -122,6 +132,7 @@ public class HelpMethods {
 		return true;
 	}
 
+	//ตรวจสอบว่าไทล์ทั้งหมดในช่วงที่กำหนดสามารถเดินผ่านได้หรือไม่
 	public static boolean IsAllTilesWalkable(int xStart, int xEnd, int y, int[][] lvlData) {
 		if (IsAllTilesClear(xStart, xEnd, y, lvlData))
 			for (int i = 0; i < xEnd - xStart; i++) {
@@ -131,13 +142,7 @@ public class HelpMethods {
 		return true;
 	}
 
-	// Player can sometimes be on an edge and in sight of enemy.
-	// The old method would return false because the player x is not on edge.
-	// This method checks both player x and player x + width.
-	// If tile under playerBox.x is not solid, we switch to playerBox.x +
-	// playerBox.width;
-	// One of them will be true, because of prior checks.
-
+	//ตรวจสอบว่าศัตรูสามารถมองเห็นผู้เล่นได้หรือไม่ โดยตรวจสอบว่าเส้นทางระหว่างศัตรูและผู้เล่นไม่มีสิ่งกีดขวางตรวจสอบว่าศัตรูสามารถมองเห็นผู้เล่นได้หรือไม่ โดยตรวจสอบว่าเส้นทางระหว่างศัตรูและผู้เล่นไม่มีสิ่งกีดขวาง
 	public static boolean IsSightClear(int[][] lvlData, Rectangle2D.Float enemyBox, Rectangle2D.Float playerBox, int yTile) {
 		int firstXTile = (int) (enemyBox.x / Game.TILES_SIZE);
 

@@ -13,29 +13,33 @@ import static utilz.Constants.*;
 import main.Game;
 
 public abstract class Enemy extends Entity {
-	protected int enemyType;
-	protected boolean firstUpdate = true;
-	protected int walkDir = LEFT;
-	protected int tileY;
-	protected float attackDistance = Game.TILES_SIZE;
-	protected boolean active = true;
-	protected boolean attackChecked;
-	protected int attackBoxOffsetX;
 
+	protected int enemyType;//ประเภทศัตรู
+	protected boolean firstUpdate = true;
+	protected int walkDir = LEFT;//ทิศทางการเดินของศัตรู
+	protected int tileY;
+	protected float attackDistance = Game.TILES_SIZE;//ระยะทางที่ศัตรูสามารถโจมตีผู้เล่นได้
+	protected boolean active = true;//ตรวจสอบว่าศัตรูยังทำงานอยู่หรือไม่
+	protected boolean attackChecked;
+	protected int attackBoxOffsetX;//ตำแหน่ง X ของ Attack Box
+
+	//กำหนดค่าเริ่มต้นให้กับตัวแปร x, y, width, height, และ enemyType เมื่อสร้างอ็อบเจกต์ Enemy
 	public Enemy(float x, float y, int width, int height, int enemyType) {
 		super(x, y, width, height);
 		this.enemyType = enemyType;
 
 		maxHealth = GetMaxHealth(enemyType);
-		currentHealth = maxHealth;
-		walkSpeed = Game.SCALE * 0.35f;
+		currentHealth = maxHealth;//เลือดเมื่อเริ่มจะเต็ม
+		walkSpeed = Game.SCALE * 0.35f;//กำหนดความเร็วในการเดิน
 	}
 
+	//อัปเดตตำแหน่งของ Attack Box ตามทิศทางการเดินของศัตรู
 	protected void updateAttackBox() {
 		attackBox.x = hitbox.x - attackBoxOffsetX;
 		attackBox.y = hitbox.y;
 	}
 
+	//อัปเดตตำแหน่งของ Attack Box ตามทิศทางการเดินของศัตรู
 	protected void updateAttackBoxFlip() {
 		if (walkDir == RIGHT)
 			attackBox.x = hitbox.x + hitbox.width;
@@ -45,17 +49,20 @@ public abstract class Enemy extends Entity {
 		attackBox.y = hitbox.y;
 	}
 
+	//กำหนด Attack Box ของศัตรูโดยคำนวณขนาดตามสเกลของเกม
 	protected void initAttackBox(int w, int h, int attackBoxOffsetX) {
 		attackBox = new Rectangle2D.Float(x, y, (int) (w * Game.SCALE), (int) (h * Game.SCALE));
 		this.attackBoxOffsetX = (int) (Game.SCALE * attackBoxOffsetX);
 	}
 
+	//ตรวจสอบว่าศัตรูอยู่บนพื้นหรือไม่
 	protected void firstUpdateCheck(int[][] lvlData) {
 		if (!IsEntityOnFloor(hitbox, lvlData))
 			inAir = true;
 		firstUpdate = false;
 	}
 
+	//ตรวจสอบการอยู่บนอากาศของศัตรู และจัดการเมื่อศัตรูสัมผัสกับวัตถุที่เป็นหนามและน้ำ
 	protected void inAirChecks(int[][] lvlData, Playing playing) {
 		if (state != HIT && state != DEAD) {
 			updateInAir(lvlData);
@@ -65,6 +72,7 @@ public abstract class Enemy extends Entity {
 		}
 	}
 
+	//อัปเดตตำแหน่งของศัตรูเมื่ออยู่บนอากาศ
 	protected void updateInAir(int[][] lvlData) {
 		if (CanMoveHere(hitbox.x, hitbox.y + airSpeed, hitbox.width, hitbox.height, lvlData)) {
 			hitbox.y += airSpeed;
@@ -76,6 +84,7 @@ public abstract class Enemy extends Entity {
 		}
 	}
 
+	//ลื่อนที่ศัตรูตามทิศทางที่กำหนด และเปลี่ยนทิศทางหากไม่สามารถเคลื่อนที่ต่อไปได้
 	protected void move(int[][] lvlData) {
 		float xSpeed = 0;
 
@@ -93,6 +102,7 @@ public abstract class Enemy extends Entity {
 		changeWalkDir();
 	}
 
+	//หันศัตรูไปทางผู้เล่นเมื่อมองเห็น
 	protected void turnTowardsPlayer(Player player) {
 		if (player.hitbox.x > hitbox.x)
 			walkDir = RIGHT;
@@ -100,6 +110,7 @@ public abstract class Enemy extends Entity {
 			walkDir = LEFT;
 	}
 
+	//ตรวจสอบว่าผู้เล่นอยู่ในระยะที่ศัตรูมองเห็น
 	protected boolean canSeePlayer(int[][] lvlData, Player player) {
 		int playerTileY = (int) (player.getHitbox().y / Game.TILES_SIZE);
 		if (playerTileY == tileY)
@@ -110,11 +121,13 @@ public abstract class Enemy extends Entity {
 		return false;
 	}
 
+	//ตรวจสอบว่าผู้เล่นอยู่ในระยะที่ศัตรูโจมตีได้
 	protected boolean isPlayerInRange(Player player) {
 		int absValue = (int) Math.abs(player.hitbox.x - hitbox.x);
 		return absValue <= attackDistance * 5;
 	}
 
+	//ตรวจสอบว่าผู้เล่นอยู่ในระยะที่ศัตรูโจมตีได้
 	protected boolean isPlayerCloseForAttack(Player player) {
 		int absValue = (int) Math.abs(player.hitbox.x - hitbox.x);
 		switch (enemyType) {
@@ -128,6 +141,7 @@ public abstract class Enemy extends Entity {
 		return false;
 	}
 
+	//ดเลือดของศัตรูเมื่อถูกโจมตี และเปลี่ยนสถานะเป็น HIT หรือ DEAD
 	public void hurt(int amount) {
 		currentHealth -= amount;
 		if (currentHealth <= 0)
@@ -143,6 +157,7 @@ public abstract class Enemy extends Entity {
 		}
 	}
 
+	//ตรวจสอบการโจมตีผู้เล่นและลดเลือดของผู้เล่นหากถูกโจมตี
 	protected void checkPlayerHit(Rectangle2D.Float attackBox, Player player) {
 		if (attackBox.intersects(player.hitbox))
 			player.changeHealth(-GetEnemyDmg(enemyType), this);
@@ -153,6 +168,7 @@ public abstract class Enemy extends Entity {
 		attackChecked = true;
 	}
 
+	//อัปเดตการเคลื่อนไหวของศัตรู
 	protected void updateAnimationTick() {
 		aniTick++;
 		if (aniTick >= ANI_SPEED) {
@@ -182,6 +198,7 @@ public abstract class Enemy extends Entity {
 		}
 	}
 
+	//เปลี่ยนการเดิน
 	protected void changeWalkDir() {
 		if (walkDir == LEFT)
 			walkDir = RIGHT;
@@ -189,6 +206,7 @@ public abstract class Enemy extends Entity {
 			walkDir = LEFT;
 	}
 
+	//รีเซ็ตศัตรูเมื่อเริ่มเกมใหม่หรือ respawn
 	public void resetEnemy() {
 		hitbox.x = x;
 		hitbox.y = y;

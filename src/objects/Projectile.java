@@ -11,6 +11,7 @@ public class Projectile {
 	private int dir;
 	private boolean active = true;
 
+	//รับตำแหน่ง (x, y) และทิศทาง (dir) ของกระสุน
 	public Projectile(int x, int y, int dir) {
 		int xOffset = (int) (-3 * Game.SCALE);
 		int yOffset = (int) (5 * Game.SCALE);
@@ -18,10 +19,11 @@ public class Projectile {
 		if (dir == 1)
 			xOffset = (int) (29 * Game.SCALE);
 
-		hitbox = new Rectangle2D.Float(x + xOffset, y + yOffset, CANNON_BALL_WIDTH, CANNON_BALL_HEIGHT);
-		this.dir = dir;
-	}
+		hitbox = new Rectangle2D.Float(x + xOffset, y + yOffset, CANNON_BALL_WIDTH, CANNON_BALL_HEIGHT);//สร้าง Hitbox ของกระสุน
+		this.dir = dir;//กำหนดทิศทางของกระสุน
+		}
 
+	//	อัปเดตตำแหน่งของกระสุน
 	public void updatePos() {
 		hitbox.x += dir * SPEED;
 	}

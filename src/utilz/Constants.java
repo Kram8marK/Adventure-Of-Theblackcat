@@ -4,9 +4,10 @@ import main.Game;
 
 public class Constants {
 
-	public static final float GRAVITY = 0.04f * Game.SCALE;
-	public static final int ANI_SPEED = 25;
+	public static final float GRAVITY = 0.04f * Game.SCALE;//ค่าคงที่ของแรงโน้มถ่วงในเกม
+	public static final int ANI_SPEED = 25;//ค่าคงที่ของความเร็วในการเคลื่อนไหว
 
+	//เก็บค่าคงที่ที่เกี่ยวข้องกับการแสดงข้อความในเกม
 	public static class Dialogue {
 		public static final int QUESTION = 0;
 		public static final int EXCLAMATION = 1;
@@ -24,6 +25,7 @@ public class Constants {
 		}
 	}
 
+	//เก็บค่าคงที่ที่เกี่ยวข้องกับกระสุน
 	public static class Projectiles {
 		public static final int CANNON_BALL_DEFAULT_WIDTH = 15;
 		public static final int CANNON_BALL_DEFAULT_HEIGHT = 15;
@@ -33,6 +35,7 @@ public class Constants {
 		public static final float SPEED = 0.75f * Game.SCALE;
 	}
 
+	//เก็บค่าคงที่ที่เกี่ยวข้องกับวัตถุต่าง ๆ ในเกม เช่น ขวดน้ำยา, กล่อง, หนาม, ปืนใหญ่, และต้นไม้
 	public static class ObjectConstants {
 
 		public static final int RED_POTION = 0;
@@ -131,6 +134,7 @@ public class Constants {
 		}
 	}
 
+	//เก็บค่าคงที่ที่เกี่ยวข้องกับศัตรูในเกม
 	public static class EnemyConstants {
 		public static final int CRABBY = 0;
 		public static final int PINKSTAR = 1;
@@ -213,6 +217,7 @@ public class Constants {
 		}
 	}
 
+	//เก็บค่าคงที่ที่เกี่ยวข้องกับสิ่งแวดล้อมในเกม
 	public static class Environment {
 		public static final int BIG_CLOUD_WIDTH_DEFAULT = 448;
 		public static final int BIG_CLOUD_HEIGHT_DEFAULT = 101;
@@ -255,6 +260,7 @@ public class Constants {
 		}
 	}
 
+	//เก็บค่าคงที่ที่เกี่ยวข้องกับทิศทางในเกม
 	public static class Directions {
 		public static final int LEFT = 0;
 		public static final int UP = 1;
@@ -262,6 +268,7 @@ public class Constants {
 		public static final int DOWN = 3;
 	}
 
+	//เก็บค่าคงที่ที่เกี่ยวข้องกับสถานะของผู้เล่นในเกม
 	public static class PlayerConstants {
 		public static final int IDLE = 0;
 		public static final int RUNNING = 1;

@@ -10,8 +10,8 @@ public class Game implements Runnable {
 
     private GamePanel gamePanel;
     private Thread gameThread;
-    private final int FPS_SET = 120;
-    private final int UPS_SET = 200;
+    private final int FPS_SET = 120;//กำหนดค่า FPS (เฟรมต่อวินาที)
+    private final int UPS_SET = 200;//กำหนดค่า UPS (อัปเดตต่อวินาที)
 
     private Playing playing;
     private Menu menu;
@@ -32,14 +32,15 @@ public class Game implements Runnable {
     private final boolean SHOW_FPS_UPS = true;
 
     public Game() {
-        System.out.println("size: " + GAME_WIDTH + " : " + GAME_HEIGHT);
-        initClasses();
+        System.out.println("size: " + GAME_WIDTH + " : " + GAME_HEIGHT);//แสดงขนาดของเกม
+        initClasses();//เริ่มต้นคลาสต่าง ๆ
         gamePanel = new GamePanel(this);
-        new GameWindow(gamePanel);
+        new GameWindow(gamePanel);//สร้าง GamePanel และ GameWindow
         gamePanel.requestFocusInWindow();
-        startGameLoop();
+        startGameLoop();//เริ่มลูปเกม
     }
 
+    //เริ่มต้นคลาสต่าง ๆ ที่เกี่ยวข้องกับเกม เช่น เมนู, การเล่นเกม, การเลือกผู้เล่น, เครดิต, และตัวเลือกเกม
     private void initClasses() {
         audioOptions = new AudioOptions(this);
         audioPlayer = new AudioPlayer();
@@ -50,11 +51,13 @@ public class Game implements Runnable {
         gameOptions = new GameOptions(this);
     }
 
+    //เริ่มลูปเกมโดยสร้างเธรดใหม่และเริ่มรันเกม
     private void startGameLoop() {
         gameThread = new Thread(this);
         gameThread.start();
     }
 
+    //อัปเดตสถานะของเกมตามสถานะปัจจุบัน (Gamestate.state)
     public void update() {
         switch (Gamestate.state) {
             case MENU -> menu.update();
@@ -66,6 +69,7 @@ public class Game implements Runnable {
         }
     }
 
+    //วาดสถานะของเกมตามสถานะปัจจุบัน (Gamestate.state)
     @SuppressWarnings("incomplete-switch")
     public void render(Graphics g) {
         switch (Gamestate.state) {
@@ -77,6 +81,7 @@ public class Game implements Runnable {
         }
     }
 
+    //ลูปหลักของเกมที่ทำการอัปเดตและวาดเกมตามค่า FPS และ UPS ที่กำหนด
     @Override
     public void run() {
         double timePerFrame = 1000000000.0 / FPS_SET;

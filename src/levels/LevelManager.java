@@ -15,14 +15,16 @@ public class LevelManager {
 	private ArrayList<Level> levels;
 	private int lvlIndex = 0, aniTick, aniIndex;
 
+	//รับออบเจ็กต์ Game มาเก็บไว้
 	public LevelManager(Game game) {
 		this.game = game;
-		importOutsideSprites();
-		createWater();
+		importOutsideSprites();//โหลดสไปรต์ของเลเวล
+		createWater();//สร้างภาพสไปรต์ของน้ำ
 		levels = new ArrayList<>();
-		buildAllLevels();
+		buildAllLevels();//สร้างรายการเลเวล
 	}
 
+	//สร้างภาพสไปรต์ของน้ำ โดยแบ่งภาพน้ำออกเป็นส่วน ๆ และเก็บไว้ในอาร์เรย์
 	private void createWater() {
 		waterSprite = new BufferedImage[5];
 		BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.WATER_TOP);
@@ -31,6 +33,7 @@ public class LevelManager {
 		waterSprite[4] = LoadSave.GetSpriteAtlas(LoadSave.WATER_BOTTOM);
 	}
 
+	//โหลดเลเวลถัดไป
 	public void loadNextLevel() {
 		Level newLevel = levels.get(lvlIndex);
 		game.getPlaying().getEnemyManager().loadEnemies(newLevel);
@@ -39,12 +42,14 @@ public class LevelManager {
 		game.getPlaying().getObjectManager().loadObjects(newLevel);
 	}
 
+	//สร้างรายการระดับทั้งหมดโดยโหลดภาพเลเวลจาก LoadSave และสร้างออบเจ็กต์ Level สำหรับแต่ละภาพ
 	private void buildAllLevels() {
 		BufferedImage[] allLevels = LoadSave.GetAllLevels();
 		for (BufferedImage img : allLevels)
 			levels.add(new Level(img));
 	}
 
+	//โหลดสไปรต์ของระดับจากไฟล์ภาพและแบ่งออกเป็นส่วน ๆ เพื่อใช้ในการแสดงผล
 	private void importOutsideSprites() {
 		BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.LEVEL_ATLAS);
 		levelSprite = new BufferedImage[48];
@@ -55,6 +60,7 @@ public class LevelManager {
 			}
 	}
 
+	//วาดระดับปัจจุบันบนหน้าจอ
 	public void draw(Graphics g, int lvlOffset) {
 		for (int j = 0; j < Game.TILES_IN_HEIGHT; j++)
 			for (int i = 0; i < levels.get(lvlIndex).getLevelData()[0].length; i++) {
@@ -70,10 +76,12 @@ public class LevelManager {
 			}
 	}
 
+	//อัปเดตข้อมูลของเลเวล
 	public void update() {
 		updateWaterAnimation();
 	}
 
+	//อัปเดตการเคลื่อนไหวของน้ำ
 	private void updateWaterAnimation() {
 		aniTick++;
 		if (aniTick >= 40) {

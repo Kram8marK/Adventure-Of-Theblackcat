@@ -35,18 +35,21 @@ public class ObjectManager {
 		loadImgs();
 	}
 
+	//ตรวจสอบว่าผู้เล่นหรือศัตรูสัมผัสกับสิ่งกีดขวาง (Spike) หรือไม่ และทำการลดเลือดหรือฆ่าผู้เล่น/ศัตรูตามเงื่อนไข
 	public void checkSpikesTouched(Player p) {
 		for (Spike s : currentLevel.getSpikes())
 			if (s.getHitbox().intersects(p.getHitbox()))
 				p.kill();
 	}
 
+	
 	public void checkSpikesTouched(Enemy e) {
 		for (Spike s : currentLevel.getSpikes())
 			if (s.getHitbox().intersects(e.getHitbox()))
 				e.hurt(200);
 	}
 
+	//ตรวจสอบว่าผู้เล่นสัมผัสกับขวดน้ำยา (Potion) หรือไม่ และทำการใช้งานขวดน้ำยานั้น
 	public void checkObjectTouched(Rectangle2D.Float hitbox) {
 		for (Potion p : potions)
 			if (p.isActive()) {
@@ -57,6 +60,7 @@ public class ObjectManager {
 			}
 	}
 
+	//ใช้สำหรับเพิ่มเลือดหรือพลังให้กับผู้เล่นตามประเภทของขวดน้ำยา
 	public void applyEffectToPlayer(Potion p) {
 		if (p.getObjType() == RED_POTION)
 			playing.getPlayer().changeHealth(RED_POTION_VALUE);
@@ -64,6 +68,7 @@ public class ObjectManager {
 			playing.getPlayer().changePower(BLUE_POTION_VALUE);
 	}
 
+	//ใช้สำหรับตรวจสอบว่าวัตถุถูกโจมตีหรือไม่ และทำการสร้างขวดน้ำยาหากวัตถุถูกทำลาย
 	public void checkObjectHit(Rectangle2D.Float attackbox) {
 		for (GameContainer gc : containers)
 			if (gc.isActive() && !gc.doAnimation) {
@@ -78,6 +83,7 @@ public class ObjectManager {
 			}
 	}
 
+	//โหลดวัตถุต่าง ๆ จากเลเวลใหม่
 	public void loadObjects(Level newLevel) {
 		currentLevel = newLevel;
 		potions = new ArrayList<>(newLevel.getPotions());
@@ -85,6 +91,7 @@ public class ObjectManager {
 		projectiles.clear();
 	}
 
+	//โหลดภาพสไปรต์ของวัตถุต่าง ๆ จากไฟล์ภาพ
 	private void loadImgs() {
 		BufferedImage potionSprite = LoadSave.GetSpriteAtlas(LoadSave.POTION_ATLAS);
 		potionImgs = new BufferedImage[2][7];
@@ -124,6 +131,7 @@ public class ObjectManager {
 			grassImgs[i] = grassTemp.getSubimage(32 * i, 0, 32, 32);
 	}
 
+	//อัปเดตวัตถุต่าง ๆ ในเกม เช่น ต้นไม้พื้นหลัง, ขวดน้ำยา, กล่อง, ปืนใหญ่, และกระสุน
 	public void update(int[][] lvlData, Player player) {
 		updateBackgroundTrees();
 		for (Potion p : potions)
@@ -139,11 +147,13 @@ public class ObjectManager {
 
 	}
 
+	//อัปเดตต้นไม้พื้นหลัง
 	private void updateBackgroundTrees() {
 		for (BackgroundTree bt : currentLevel.getTrees())
 			bt.update();
 	}
 
+	//อัปเดตกระสุนและตรวจสอบการชนกับผู้เล่นหรือสิ่งกีดขวาง
 	private void updateProjectiles(int[][] lvlData, Player player) {
 		for (Projectile p : projectiles)
 			if (p.isActive()) {
@@ -171,6 +181,7 @@ public class ObjectManager {
 		return false;
 	}
 
+	//อัปเดตปืนใหญ่และตรวจสอบว่าผู้เล่นอยู่ในระยะยิงหรือไม่
 	private void updateCannons(int[][] lvlData, Player player) {
 		for (Cannon c : currentLevel.getCannons()) {
 			if (!c.doAnimation)
@@ -186,6 +197,7 @@ public class ObjectManager {
 		}
 	}
 
+	//ยิงกระสุนจากปืนใหญ่
 	private void shootCannon(Cannon c) {
 		int dir = 1;
 		if (c.getObjType() == CANNON_LEFT)
@@ -194,6 +206,7 @@ public class ObjectManager {
 		projectiles.add(new Projectile((int) c.getHitbox().x, (int) c.getHitbox().y, dir));
 	}
 
+	//วาดวัตถุต่าง ๆ บนหน้าจอ
 	public void draw(Graphics g, int xLvlOffset) {
 		drawPotions(g, xLvlOffset);
 		drawContainers(g, xLvlOffset);
@@ -203,11 +216,13 @@ public class ObjectManager {
 		drawGrass(g, xLvlOffset);
 	}
 
+	//วาดหญ้าบนหน้าจอ
 	private void drawGrass(Graphics g, int xLvlOffset) {
 		for (Grass grass : currentLevel.getGrass())
 			g.drawImage(grassImgs[grass.getType()], grass.getX() - xLvlOffset, grass.getY(), (int) (32 * Game.SCALE), (int) (32 * Game.SCALE), null);
 	}
-
+	
+	//วาดต้นไม้พื้นหลังบนหน้าจอ
 	public void drawBackgroundTrees(Graphics g, int xLvlOffset) {
 		for (BackgroundTree bt : currentLevel.getTrees()) {
 
@@ -219,12 +234,14 @@ public class ObjectManager {
 		}
 	}
 
+	//วาดกระสุนบนหน้าจอ
 	private void drawProjectiles(Graphics g, int xLvlOffset) {
 		for (Projectile p : projectiles)
 			if (p.isActive())
 				g.drawImage(cannonBallImg, (int) (p.getHitbox().x - xLvlOffset), (int) (p.getHitbox().y), CANNON_BALL_WIDTH, CANNON_BALL_HEIGHT, null);
 	}
 
+	//วาดปืนใหญ่บนหน้าจอ
 	private void drawCannons(Graphics g, int xLvlOffset) {
 		for (Cannon c : currentLevel.getCannons()) {
 			int x = (int) (c.getHitbox().x - xLvlOffset);
@@ -238,12 +255,14 @@ public class ObjectManager {
 		}
 	}
 
+	//วาดสิ่งกีดขวางบนหน้าจอ
 	private void drawTraps(Graphics g, int xLvlOffset) {
 		for (Spike s : currentLevel.getSpikes())
 			g.drawImage(spikeImg, (int) (s.getHitbox().x - xLvlOffset), (int) (s.getHitbox().y - s.getyDrawOffset()), SPIKE_WIDTH, SPIKE_HEIGHT, null);
 
 	}
 
+	//วาดกล่องหรือถังบนหน้าจอ
 	private void drawContainers(Graphics g, int xLvlOffset) {
 		for (GameContainer gc : containers)
 			if (gc.isActive()) {
@@ -255,6 +274,7 @@ public class ObjectManager {
 			}
 	}
 
+	//วาดโพชั่น
 	private void drawPotions(Graphics g, int xLvlOffset) {
 		for (Potion p : potions)
 			if (p.isActive()) {

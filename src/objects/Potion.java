@@ -7,6 +7,7 @@ public class Potion extends GameObject {
 	private float hoverOffset;
 	private int maxHoverOffset, hoverDir = 1;
 
+	//รับตำแหน่ง (x, y) และประเภทของวัตถุ (objType)
 	public Potion(int x, int y, int objType) {
 		super(x, y, objType);
 		doAnimation = true;
@@ -24,6 +25,7 @@ public class Potion extends GameObject {
 		updateHover();
 	}
 
+	//อัปเดตการเคลื่อนที่ขึ้นลงของขวดน้ำยา
 	private void updateHover() {
 		hoverOffset += (0.075f * Game.SCALE * hoverDir);
 

@@ -6,18 +6,18 @@ public class BackgroundTree {
 
 	private int x, y, type, aniIndex, aniTick;
 
+	//รับตำแหน่ง (x, y) และประเภท (type) ของต้นไม้
 	public BackgroundTree(int x, int y, int type) {
 		this.x = x;
 		this.y = y;
 		this.type = type;
 
-		// Sets the aniIndex to a random value, to get some variations for the trees so
-		// they all don't move in synch.
 		Random r = new Random();
 		aniIndex = r.nextInt(4);
 
 	}
 
+	//อัปเดตภาพเคลื่อนไหวของต้นไม้
 	public void update() {
 		aniTick++;
 		if (aniTick >= 35) {

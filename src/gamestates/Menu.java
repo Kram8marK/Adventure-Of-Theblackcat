@@ -11,10 +11,11 @@ import utilz.LoadSave;
 
 public class Menu extends State implements Statemethods {
 
-    private MenuButton[] buttons = new MenuButton[4];
-    private BufferedImage backgroundImg, backgroundImgPink;
-    private int menuX, menuY, menuWidth, menuHeight;
+    private MenuButton[] buttons = new MenuButton[4];//อาร์เรย์ของปุ่มเมนูที่ใช้ในเมนูหลัก
+    private BufferedImage backgroundImg, backgroundImgPink;//ภาพพื้นหลังของเมนูหลัก/ภาพพื้นหลังสีชมพูที่ใช้เป็นพื้นหลังหลัก
+    private int menuX, menuY, menuWidth, menuHeight;//ตำแหน่ง X และ Y ของเมนู/ความกว้างและความสูงของเมนู
 
+    //กำหนดค่าเริ่มต้นให้กับตัวแปรต่าง ๆ
     public Menu(Game game) {
         super(game);
         loadButtons();
@@ -23,6 +24,7 @@ public class Menu extends State implements Statemethods {
 
     }
 
+    //โหลดภาพพื้นหลังของเมนูและกำหนดขนาดและตำแหน่งของเมนู
     private void loadBackground() {
         backgroundImg = LoadSave.GetSpriteAtlas(LoadSave.MENU_BACKGROUND);
         menuWidth = (int) (backgroundImg.getWidth() * Game.SCALE);
@@ -31,6 +33,7 @@ public class Menu extends State implements Statemethods {
         menuY = (int) (25 * Game.SCALE);
     }
 
+    //โหลดปุ่มเมนูและกำหนดตำแหน่ง, รูปแบบ, และสถานะที่เกี่ยวข้องกับแต่ละปุ่ม
     private void loadButtons() {
         buttons[0] = new MenuButton(Game.GAME_WIDTH / 2, (int) (130 * Game.SCALE), 0, Gamestate.PLAYER_SELECTION);
         buttons[1] = new MenuButton(Game.GAME_WIDTH / 2, (int) (200 * Game.SCALE), 1, Gamestate.OPTIONS);
@@ -38,12 +41,14 @@ public class Menu extends State implements Statemethods {
         buttons[3] = new MenuButton(Game.GAME_WIDTH / 2, (int) (340 * Game.SCALE), 2, Gamestate.QUIT);
     }
 
+    //อัปเดตสถานะของปุ่มเมนูทุกปุ่ม
     @Override
     public void update() {
         for (MenuButton mb : buttons)
             mb.update();
     }
 
+    //วาดภาพพื้นหลังและปุ่มเมนูบนหน้าจอ
     @Override
     public void draw(Graphics g) {
         g.drawImage(backgroundImgPink, 0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT, null);
@@ -53,6 +58,7 @@ public class Menu extends State implements Statemethods {
             mb.draw(g);
     }
 
+    //จัดการการกดเมาส์บนปุ่มเมนู
     @Override
     public void mousePressed(MouseEvent e) {
         for (MenuButton mb : buttons) {
@@ -62,6 +68,7 @@ public class Menu extends State implements Statemethods {
         }
     }
 
+    //จัดการการปล่อยเมาส์บนปุ่มเมนูและเปลี่ยนสถานะของเกมตามปุ่มที่คลิก
     @Override
     public void mouseReleased(MouseEvent e) {
         for (MenuButton mb : buttons) {
@@ -76,12 +83,14 @@ public class Menu extends State implements Statemethods {
         resetButtons();
     }
 
+    // รีเซ็ตสถานะของปุ่มเมนูทั้งหมด
     private void resetButtons() {
         for (MenuButton mb : buttons)
             mb.resetBools();
 
     }
 
+    //จัดการการเคลื่อนเมาส์บนปุ่มเมนู
     @Override
     public void mouseMoved(MouseEvent e) {
         for (MenuButton mb : buttons)

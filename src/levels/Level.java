@@ -21,8 +21,8 @@ import static utilz.Constants.ObjectConstants.*;
 
 public class Level {
 
-	private BufferedImage img;
-	private int[][] lvlData;
+	private BufferedImage img;//เก็บภาพที่ใช้เป็นแผน
+	private int[][] lvlData;//เก็บข้อมูลระดับในรูปแบบอาร์เรย์
 
 	private ArrayList<Crabby> crabs = new ArrayList<>();
 	private ArrayList<Pinkstar> pinkstars = new ArrayList<>();
@@ -39,6 +39,7 @@ public class Level {
 	private int maxLvlOffsetX;
 	private Point playerSpawn;
 
+	//รับภาพ (BufferedImage) มาใช้เป็นแผนที่
 	public Level(BufferedImage img) {
 		this.img = img;
 		lvlData = new int[img.getHeight()][img.getWidth()];
@@ -46,12 +47,8 @@ public class Level {
 		calcLvlOffsets();
 	}
 
+	//โหลดข้อมูลเลเวลโดยการวนลูปผ่านทุกพิกเซลของภาพและอ่านค่าสี (แดง, เขียว, น้ำเงิน) เพื่อโหลดข้อมูลเลเวล, เอนทิตี, และวัตถุต่าง ๆ
 	private void loadLevel() {
-
-		// Looping through the image colors just once. Instead of one per
-		// object/enemy/etc..
-		// Removed many methods in HelpMethods class.
-
 		for (int y = 0; y < img.getHeight(); y++)
 			for (int x = 0; x < img.getWidth(); x++) {
 				Color c = new Color(img.getRGB(x, y));
@@ -65,6 +62,7 @@ public class Level {
 			}
 	}
 
+	//โหลดข้อมูลระดับจากค่าสีแดง โดยกำหนดค่าของ lvlData และเพิ่มหญ้า (Grass) ลงในรายการหากตรงกับเงื่อนไข
 	private void loadLevelData(int redValue, int x, int y) {
 		if (redValue >= 50)
 			lvlData[y][x] = 0;
@@ -76,10 +74,12 @@ public class Level {
 		}
 	}
 
+	//โหลดเอนทิตี (ศัตรูและผู้เล่น) จากค่าสีเขียว
 	private int getRndGrassType(int xPos) {
 		return xPos % 2;
 	}
 
+	//โหลดวัตถุต่าง ๆ จากค่าสีน้ำเงิน
 	private void loadEntities(int greenValue, int x, int y) {
 		switch (greenValue) {
 		case CRABBY -> crabs.add(new Crabby(x * Game.TILES_SIZE, y * Game.TILES_SIZE));
@@ -99,6 +99,7 @@ public class Level {
 		}
 	}
 
+	//คำนวณขอบเขตของระดับ
 	private void calcLvlOffsets() {
 		lvlTilesWide = img.getWidth();
 		maxTilesOffset = lvlTilesWide - Game.TILES_IN_WIDTH;

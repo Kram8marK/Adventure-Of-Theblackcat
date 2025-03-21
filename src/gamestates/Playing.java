@@ -28,7 +28,7 @@ import static utilz.Constants.Dialogue.*;
 
 public class Playing extends State implements Statemethods {
 
-    private Player player;
+    private Player player;//ออบเจกต์ผู้เล่น
     private LevelManager levelManager;
     private EnemyManager enemyManager;
     private ObjectManager objectManager;
@@ -58,20 +58,12 @@ public class Playing extends State implements Statemethods {
     private boolean playerDying;
     private boolean drawRain;
 
-    // Ship will be decided to drawn here. It's just a cool addition to the game
-    // for the first level. Hinting on that the player arrived with the boat.
-
-    // If you would like to have it on more levels, add a value for objects when
-    // creating the level from lvlImgs. Just like any other object.
-
-    // Then play around with position values so it looks correct depending on where
-    // you want
-    // it.
 
     private boolean drawShip = true;
     private int shipAni, shipTick, shipDir = 1;
     private float shipHeightDelta, shipHeightChange = 0.05f * Game.SCALE;
 
+    //กำหนดค่าเริ่มต้นให้กับตัวแปรต่าง ๆ เช่น โหลดภาพพื้นหลัง, เมฆ, เรือ, และไดอะล็อก
     public Playing(Game game) {
         super(game);
         initClasses();
@@ -96,11 +88,6 @@ public class Playing extends State implements Statemethods {
 
     private void loadDialogue() {
         loadDialogueImgs();
-
-        // Load dialogue array with premade objects, that gets activated when needed.
-        // This is a simple
-        // way of avoiding ConcurrentModificationException error. (Adding to a list that
-        // is being looped through.
 
         for (int i = 0; i < 10; i++)
             dialogEffects.add(new DialogueEffect(0, 0, EXCLAMATION));
@@ -140,6 +127,7 @@ public class Playing extends State implements Statemethods {
         maxLvlOffsetX = levelManager.getCurrentLevel().getLvlOffset();
     }
 
+    //กำหนดค่าเริ่มต้นให้กับคลาสต่าง ๆ
     private void initClasses() {
         levelManager = new LevelManager(game);
         enemyManager = new EnemyManager(this);
@@ -161,6 +149,7 @@ public class Playing extends State implements Statemethods {
         player.setSpawn(levelManager.getCurrentLevel().getPlayerSpawn());
     }
 
+    //อัปเดตสถานะของเกมตามสถานะต่าง ๆ
     @Override
     public void update() {
         if (paused)
@@ -233,6 +222,7 @@ public class Playing extends State implements Statemethods {
                 }
     }
 
+    //ตรวจสอบว่าผู้เล่นอยู่ใกล้ขอบหน้าจอหรือไม่และปรับตำแหน่งของระดับ
     private void checkCloseToBorder() {
         int playerX = (int) player.getHitbox().x;
         int diff = playerX - xLvlOffset;
@@ -245,6 +235,7 @@ public class Playing extends State implements Statemethods {
         xLvlOffset = Math.max(Math.min(xLvlOffset, maxLvlOffsetX), 0);
     }
 
+    //วาดภาพพื้นหลัง, เมฆ, ฝน, เรือ, ระดับ, วัตถุ, ศัตรู, ผู้เล่น, และ Overlay ต่าง ๆ บนหน้าจอ
     @Override
     public void draw(Graphics g) {
         g.drawImage(backgroundImg, 0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT, null);
@@ -421,6 +412,7 @@ public class Playing extends State implements Statemethods {
             gameCompletedOverlay.mouseMoved(e);
     }
 
+    //กำหนดสถานะเมื่อผู้เล่นผ่านระดับและตรวจสอบว่าผู้เล่นผ่านเกมทั้งหมดหรือไม่
     public void setLevelCompleted(boolean levelCompleted) {
         game.getAudioPlayer().lvlCompleted();
         if (levelManager.getLevelIndex() + 1 >= levelManager.getAmountOfLevels()) {

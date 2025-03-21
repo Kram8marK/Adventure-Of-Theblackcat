@@ -3,6 +3,7 @@ package entities;
 import static utilz.Constants.Dialogue.*;
 import static utilz.Constants.Directions.LEFT;
 import static utilz.Constants.EnemyConstants.*;
+import static utilz.Constants.EnemyConstants.GetSpriteAmount;
 import static utilz.HelpMethods.CanMoveHere;
 import static utilz.HelpMethods.IsFloor;
 
@@ -10,18 +11,21 @@ import gamestates.Playing;
 
 public class Shark extends Enemy {
 
+	//กำหนดค่าเริ่มต้นให้กับตัวแปร x, y, width, height, และ enemyType เมื่อสร้างอ็อบเจกต์ Shark
 	public Shark(float x, float y) {
 		super(x, y, SHARK_WIDTH, SHARK_HEIGHT, SHARK);
 		initHitbox(18, 22);
 		initAttackBox(20, 20, 20);
 	}
 
+	//อัปเดตพฤติกรรม, การเคลื่อนไหว, และตำแหน่งของ Attack Box ของ Shark
 	public void update(int[][] lvlData, Playing playing) {
 		updateBehavior(lvlData, playing);
 		updateAnimationTick();
 		updateAttackBoxFlip();
 	}
 
+	//อัปเดตพฤติกรรมของ Shark ตามสถานะต่าง ๆ
 	private void updateBehavior(int[][] lvlData, Playing playing) {
 		if (firstUpdate)
 			firstUpdateCheck(lvlData);
@@ -30,13 +34,13 @@ public class Shark extends Enemy {
 			inAirChecks(lvlData, playing);
 		else {
 			switch (state) {
-			case IDLE:
+			case IDLE://หาก Shark อยู่บนพื้น จะเปลี่ยนสถานะเป็น RUNNING
 				if (IsFloor(hitbox, lvlData))
 					newState(RUNNING);
 				else
 					inAir = true;
 				break;
-			case RUNNING:
+			case RUNNING://หาก Shark มองเห็นผู้เล่น จะหันไปทางผู้เล่นและโจมตีหากผู้เล่นอยู่ในระยะใกล้
 				if (canSeePlayer(lvlData, playing.getPlayer())) {
 					turnTowardsPlayer(playing.getPlayer());
 					if (isPlayerCloseForAttack(playing.getPlayer()))
@@ -45,7 +49,7 @@ public class Shark extends Enemy {
 
 				move(lvlData);
 				break;
-			case ATTACK:
+			case ATTACK://หาก Shark อยู่ในสถานะ ATTACK จะตรวจสอบการโจมตีผู้เล่นและเคลื่อนที่ไปข้างหน้า
 				if (aniIndex == 0)
 					attackChecked = false;
 				else if (aniIndex == 3) {
@@ -55,7 +59,7 @@ public class Shark extends Enemy {
 				}
 
 				break;
-	 		case HIT:
+	 		case HIT://หาก Shark ถูกโจมตี จะถูกพลักกลับและอัปเดตการเคลื่อนไหว
 				if (aniIndex <= GetSpriteAmount(enemyType, state) - 2)
 					pushBack(pushBackDir, lvlData, 2f);
 				updatePushBackDrawOffset();
